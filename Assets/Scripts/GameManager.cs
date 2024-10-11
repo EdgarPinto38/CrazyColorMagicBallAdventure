@@ -5,8 +5,8 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject ballObject;
-    public Ball ball; // Referencia al script de la pelota
+    public GameObject ballObject; // Prefab de la pelota
+    public Ball ball; // Referencia al script de la pelota principal
 
     public Cube[] cubes; // Arreglo de cubos
 
@@ -16,10 +16,14 @@ public class GameManager : MonoBehaviour
     public GameObject PanelGameOver;
     public TextMeshProUGUI countdownText;
 
+    private List<GameObject> balls = new List<GameObject>(); // Lista para las bolas activas
+
     void Start()
     {
         StartLevelCountdown(3);
         Time.timeScale = 1;
+        balls.Add(ballObject); // Agregar la primera bola a la lista
+        StartCoroutine(SpawnAdditionalBalls()); // Iniciar la corutina para crear más bolas
     }
 
     void Update()
@@ -28,57 +32,84 @@ public class GameManager : MonoBehaviour
         CheckCubesLives(); // Verificar constantemente si los cubos 0, 1 y 2 tienen 0 vidas
     }
 
+    // Método para generar bolas adicionales después de un tiempo determinado
+    private IEnumerator SpawnAdditionalBalls()
+    {
+        yield return new WaitForSeconds(10); // Espera de 10 segundos para la segunda bola
+        SpawnBall();
+        
+        yield return new WaitForSeconds(15); // Espera hasta completar 25 segundos para la tercera bola
+        SpawnBall();
+        
+        yield return new WaitForSeconds(30); // Espera hasta completar 55 segundos para la cuarta bola
+        SpawnBall();
+        
+        yield return new WaitForSeconds(35); // Espera hasta completar 90 segundos para la quinta bola
+        SpawnBall();
+    }
+
+    // Método para instanciar una nueva bola
+    private void SpawnBall()
+    {
+        GameObject newBall = Instantiate(ballObject, ballObject.transform.position, Quaternion.identity); // Crear una nueva bola en la misma posición que la original
+        balls.Add(newBall); // Añadir la nueva bola a la lista de bolas activas
+        newBall.SetActive(true); // Activar la nueva bola
+    }
+
     void CheckBallPosition()
     {
-        // Verifica si la pelota ha pasado los límites en el eje X o Z
-        if (ball.transform.position.x > ball.limit)
+        foreach (GameObject activeBall in balls)
         {
-            if (cubes[0] != null)
+            Ball ballScript = activeBall.GetComponent<Ball>();
+            if (ballScript.transform.position.x > ballScript.limit)
             {
-                cubes[0].LoseLife();
-                if (cubes[0].lives <= 0)
+                if (cubes[0] != null)
                 {
-                    cubes[0] = null; 
-                    walls[0].SetActive(true);
+                    cubes[0].LoseLife();
+                    if (cubes[0].lives <= 0)
+                    {
+                        cubes[0] = null;
+                        walls[0].SetActive(true);
+                    }
                 }
             }
-        }
-        else if (ball.transform.position.x < -ball.limit)
-        {
-            if (cubes[1] != null)
+            else if (ballScript.transform.position.x < -ballScript.limit)
             {
-                cubes[1].LoseLife();
-                if (cubes[1].lives <= 0)
+                if (cubes[1] != null)
                 {
-                    cubes[1] = null;
-                    walls[1].SetActive(true);
+                    cubes[1].LoseLife();
+                    if (cubes[1].lives <= 0)
+                    {
+                        cubes[1] = null;
+                        walls[1].SetActive(true);
+                    }
                 }
             }
-        }
-        else if (ball.transform.position.z > ball.limit)
-        {
-            if (cubes[2] != null)
+            else if (ballScript.transform.position.z > ballScript.limit)
             {
-                cubes[2].LoseLife();
-                if (cubes[2].lives <= 0)
+                if (cubes[2] != null)
                 {
-                    cubes[2] = null;
-                    walls[2].SetActive(true);
+                    cubes[2].LoseLife();
+                    if (cubes[2].lives <= 0)
+                    {
+                        cubes[2] = null;
+                        walls[2].SetActive(true);
+                    }
                 }
             }
-        }
-        else if (ball.transform.position.z < -ball.limit)
-        {
-            if (cubes[3] != null)
+            else if (ballScript.transform.position.z < -ballScript.limit)
             {
-                cubes[3].LoseLife();
-                if (cubes[3].lives <= 0)
+                if (cubes[3] != null)
                 {
-                    cubes[3] = null;
-                    walls[3].SetActive(true);
-                    PanelGame.SetActive(false);
-                    PanelGameOver.SetActive(true);
-                    Time.timeScale = 0;
+                    cubes[3].LoseLife();
+                    if (cubes[3].lives <= 0)
+                    {
+                        cubes[3] = null;
+                        walls[3].SetActive(true);
+                        PanelGame.SetActive(false);
+                        PanelGameOver.SetActive(true);
+                        Time.timeScale = 0;
+                    }
                 }
             }
         }
@@ -94,7 +125,7 @@ public class GameManager : MonoBehaviour
             if (cubes[i] != null && cubes[i].lives > 0)
             {
                 allCubesDead = false;
-                break; 
+                break;
             }
         }
 
@@ -109,7 +140,7 @@ public class GameManager : MonoBehaviour
     {
         PanelGame.SetActive(false); 
         PanelWin.SetActive(true);
-        Time.timeScale = 0; 
+        Time.timeScale = 0;
     }
 
     public void StartLevelCountdown(int countdownTime)
