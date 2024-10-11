@@ -12,8 +12,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject[] walls;
     public GameObject PanelGame;
-    public GameObject PanelWin;
     public GameObject PanelGameOver;
+    public TextMeshProUGUI gameOverText;
     public TextMeshProUGUI countdownText;
 
     private List<GameObject> balls = new List<GameObject>(); // Lista para las bolas activas
@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour
                         walls[3].SetActive(true);
                         PanelGame.SetActive(false);
                         PanelGameOver.SetActive(true);
+                        gameOverText.text = "You Lose";
                         Time.timeScale = 0;
                     }
                 }
@@ -139,7 +140,8 @@ public class GameManager : MonoBehaviour
     private void Win()
     {
         PanelGame.SetActive(false); 
-        PanelWin.SetActive(true);
+        PanelGameOver.SetActive(true);
+        gameOverText.text = "You win!";
         Time.timeScale = 0;
     }
 

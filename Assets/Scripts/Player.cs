@@ -13,34 +13,22 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        
+        // Obtener el input del teclado y el joystick
+        float horizontal = Input.GetAxis("Horizontal"); // Soporta teclado y joystick
+        float vertical = Input.GetAxis("Vertical"); // Soporta teclado y joystick
+
+        // Movimiento en el eje X
         if (moverEnX)
         {
-            if (Input.GetKey(KeyCode.D))
-            {
-                transform.position += Vector3.right * velocidad * Time.deltaTime;
-                transform.position = new Vector3(Mathf.Clamp(transform.position.x, -limiteX, limiteX), transform.position.y, transform.position.z);
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                transform.position += Vector3.left * velocidad * Time.deltaTime;
-                transform.position = new Vector3(Mathf.Clamp(transform.position.x, -limiteX, limiteX), transform.position.y, transform.position.z);
-            }
+            transform.position += Vector3.right * horizontal * velocidad * Time.deltaTime;
+            transform.position = new Vector3(Mathf.Clamp(transform.position.x, -limiteX, limiteX), transform.position.y, transform.position.z);
         }
 
-        
+        // Movimiento en el eje Z
         if (moverEnZ)
         {
-            if (Input.GetKey(KeyCode.W))
-            {
-                transform.position += Vector3.forward * velocidad * Time.deltaTime;
-                transform.position = new Vector3(transform.position.x, transform.position.y, Mathf.Clamp(transform.position.z, -limiteZ, limiteZ));
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                transform.position += Vector3.back * velocidad * Time.deltaTime;
-                transform.position = new Vector3(transform.position.x, transform.position.y, Mathf.Clamp(transform.position.z, -limiteZ, limiteZ));
-            }
+            transform.position += Vector3.forward * vertical * velocidad * Time.deltaTime;
+            transform.position = new Vector3(transform.position.x, transform.position.y, Mathf.Clamp(transform.position.z, -limiteZ, limiteZ));
         }
     }
 }
