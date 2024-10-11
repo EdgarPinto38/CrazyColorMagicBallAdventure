@@ -6,6 +6,6 @@
 
 ### Materia: Diseño y producción de proyectos para consolas
 
-### Enlace para descargar ejecutable de escritorio: 
+### Enlace para descargar ejecutable de escritorio: [Ejecutable](https://drive.google.com/file/d/1MXHbWVPmJvzOydWIS4VVStvgRij6jnsd/view?usp=sharing)
 
-### Enlace a itch.io para jugar el juego en version web:
+### Enlace a itch.io para jugar el juego en version web: [Juego en Web!](https://skullsociety.itch.io/crazy-color-magic-ball-adventure)
