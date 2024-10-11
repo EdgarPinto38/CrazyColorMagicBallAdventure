@@ -51,7 +51,7 @@ public class AI : MonoBehaviour
         {
             if (!isInErrorState && !isStationary && Random.value < errorChance)
             {
-                // Verifica que el arreglo no esté vacío
+                
                 if (possibleErrors != null && possibleErrors.Length > 0)
                 {
                     int randomIndex = Random.Range(0, possibleErrors.Length);
@@ -59,7 +59,6 @@ public class AI : MonoBehaviour
                     switch (error)
                     {
                         case ErrorType.RandomMove:
-                            Debug.Log("Error: Movimiento Aleatorio");
                             float randomX = Random.Range(-randomMoveRange, randomMoveRange);
                             float randomZ = Random.Range(-randomMoveRange, randomMoveRange);
                             if (moveInX)
@@ -73,7 +72,6 @@ public class AI : MonoBehaviour
                             break;
 
                         case ErrorType.StayStill:
-                            Debug.Log("Error: Quieto");
                             moveSpeed = 0;
                             isStationary = true;
                             stationaryTime = Random.Range(1f, 3f);
@@ -83,7 +81,7 @@ public class AI : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("El arreglo possibleErrors está vacío o no está inicializado.");
+                   Debug.LogError("El arreglo possibleErrors está vacío o no está inicializado.");
                 }
             }
             yield return new WaitForSeconds(0.1f);
@@ -94,26 +92,22 @@ public class AI : MonoBehaviour
     {
         while (errorDuration > 0)
         {
-            Debug.Log("En estado de error");
             errorDuration -= Time.deltaTime;
             ExecuteErrorBehavior();
             yield return null;
         }
         isInErrorState = false;
-        Debug.Log("Salir del estado de error");
     }
 
     IEnumerator HandleStationaryState()
     {
         while (stationaryTime > 0)
         {
-            Debug.Log("En estado estacionario");
             stationaryTime -= Time.deltaTime;
             yield return null;
         }
         isStationary = false;
         moveSpeed = originalMoveSpeed;
-        Debug.Log("Salir del estado estacionario");
     }
 
     void Update()
@@ -159,7 +153,7 @@ public class AI : MonoBehaviour
     // Reanuda el movimiento después de quedarse quieto
     void ResumeMovement()
     {
-        moveSpeed = 5f; // Restaurar velocidad
+        moveSpeed = 5f; 
         isStationary = false;
     }
 
