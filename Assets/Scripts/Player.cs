@@ -14,8 +14,8 @@ public class Player : MonoBehaviour
     void Update()
     {
         // Obtener el input del teclado y el joystick
-        float horizontal = Input.GetAxis("Horizontal"); // Soporta teclado y joystick
-        float vertical = Input.GetAxis("Vertical"); // Soporta teclado y joystick
+        float horizontal = Input.GetAxis("Horizontal"); 
+        float vertical = Input.GetAxis("Vertical"); 
 
         // Movimiento en el eje X
         if (moverEnX)

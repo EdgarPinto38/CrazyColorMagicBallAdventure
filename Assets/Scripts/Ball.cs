@@ -106,7 +106,7 @@ public class Ball : MonoBehaviour
 
     private void SlowDown()
     {
-        speed = Mathf.Max(speed - 1, 0);
+        speed = Mathf.Max(speed - 2, 0);
         ApplyVelocity();
     }
 
