@@ -21,11 +21,13 @@ public class Ball : MonoBehaviour
     private Vector3 direction;
     private float idleTime = 0f;
     private Coroutine sizeCoroutine;
+    private Vector3 originalSize;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         SetRandomStartPositionAndDirection();
+        originalSize = transform.localScale;
     }
 
     void Update()
@@ -121,6 +123,7 @@ public class Ball : MonoBehaviour
         }
 
         sizeCoroutine = StartCoroutine(RevertSizeAfterTime(SIZE_DURATION));
+        size = 1;
     }
 
     private void ReverseDirection()
@@ -166,10 +169,9 @@ public class Ball : MonoBehaviour
         }
     }
 
-    private IEnumerator RevertSizeAfterTime(float time)
+    private IEnumerator RevertSizeAfterTime(float duration)
     {
-        yield return new WaitForSeconds(time);
-        size -= SIZE_INCREMENT;
-        transform.localScale = new Vector3(size, size, size);
+        yield return new WaitForSeconds(duration);
+        transform.localScale = originalSize; 
     }
 }

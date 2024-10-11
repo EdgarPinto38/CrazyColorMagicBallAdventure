@@ -8,7 +8,7 @@ public class AI : MonoBehaviour
     public ErrorType[] possibleErrors = new ErrorType[] { ErrorType.RandomMove, ErrorType.StayStill };
 
     public List<Transform> balls; // Lista de bolas que la IA seguirá
-    public float moveSpeed = 5f;
+    public float moveSpeed = 8f;
     public bool moveInX = true; // Indica si la IA se moverá en el eje X o Z
     public float errorChance = 0.5f; // Probabilidad de error
     public float randomMoveRange = 5f; // Rango de movimiento aleatorio

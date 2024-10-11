@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float velocidad = 5f; 
+    public float velocidad = 8f; 
     public bool moverEnX = true;  
     public bool moverEnZ = true;  
 

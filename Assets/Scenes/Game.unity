@@ -221,11 +221,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 1ccfe7eff2105404b86f0f2eb7a15616, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 575fbdd1ef67bfe44b45d99bd7c4cead, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0.08
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1589,7 +1589,7 @@ MonoBehaviour:
   - {fileID: 1326695417}
   - {fileID: 2131587637}
   - {fileID: 480575292}
-  moveSpeed: 5
+  moveSpeed: 8
   moveInX: 0
   errorChance: 0.05
   randomMoveRange: 5
@@ -1605,7 +1605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f8174e5ce44ca498451cbfa0453901, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lives: 5
+  lives: 10
   livesText: {fileID: 80347995}
 --- !u!1 &705507993
 GameObject:
@@ -3817,7 +3817,7 @@ MonoBehaviour:
   - {fileID: 1326695417}
   - {fileID: 2131587637}
   - {fileID: 480575292}
-  moveSpeed: 5
+  moveSpeed: 8
   moveInX: 1
   errorChance: 0.05
   randomMoveRange: 5
@@ -3833,7 +3833,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f8174e5ce44ca498451cbfa0453901, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lives: 5
+  lives: 10
   livesText: {fileID: 2022555121}
 --- !u!1 &1796402566
 GameObject:
@@ -3970,7 +3970,7 @@ MonoBehaviour:
   - {fileID: 1326695417}
   - {fileID: 2131587637}
   - {fileID: 480575292}
-  moveSpeed: 5
+  moveSpeed: 8
   moveInX: 0
   errorChance: 0.05
   randomMoveRange: 5
@@ -3986,7 +3986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f8174e5ce44ca498451cbfa0453901, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lives: 5
+  lives: 10
   livesText: {fileID: 964285380}
 --- !u!1 &1844088638
 GameObject:
@@ -4116,7 +4116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7366a644891f434f8d5f35f20f102b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocidad: 5
+  velocidad: 8
   moverEnX: 1
   moverEnZ: 0
 --- !u!114 &1844088645
@@ -4131,7 +4131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f8174e5ce44ca498451cbfa0453901, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lives: 5
+  lives: 10
   livesText: {fileID: 234537295}
 --- !u!1 &1879272394
 GameObject:
