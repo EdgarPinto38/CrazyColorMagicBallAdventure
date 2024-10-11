@@ -7,7 +7,7 @@ public class AI : MonoBehaviour
     public enum ErrorType { RandomMove, StayStill };
     public ErrorType[] possibleErrors = new ErrorType[] { ErrorType.RandomMove, ErrorType.StayStill };
 
-    public Transform ball; // La pelota que la IA seguirá
+    public List<Transform> balls; // Lista de bolas que la IA seguirá
     public float moveSpeed = 5f;
     public bool moveInX = true; // Indica si la IA se moverá en el eje X o Z
     public float errorChance = 0.5f; // Probabilidad de error
@@ -16,33 +16,22 @@ public class AI : MonoBehaviour
 
     private Vector3 targetPosition;
     private bool isStationary = false;
-    private float stationaryTime = 0f;
-
     private bool isInErrorState = false; // Bandera para saber si está en un estado de error
-    private float errorDuration = 0f; // Duración del error
-    private Vector3 randomTargetPosition; // Objetivo para cuando ocurra un movimiento aleatorio
 
-    private float fixedPosition; // Para fijar el eje que no se debe mover
+    private float errorDuration = 0f; // Duración del error
+    private float stationaryTime = 0f;
+    private float fixedPosition; // Eje fijo
+    private Vector3 randomTargetPosition; // Objetivo para el movimiento aleatorio
     private float originalMoveSpeed;
 
     void Start()
     {
         // Fijar la posición en el eje que no se moverá (X o Z)
-        if (moveInX)
-        {
-            fixedPosition = transform.position.z; // Si se mueve en X, fijar Z
-        }
-        else
-        {
-            fixedPosition = transform.position.x; // Si se mueve en Z, fijar X
-        }
+        fixedPosition = moveInX ? transform.position.z : transform.position.x;
 
         targetPosition = transform.position;
         originalMoveSpeed = moveSpeed;
-        isInErrorState = false;
-        isStationary = false;
         StartCoroutine(CheckForErrors());
-
     }
 
     IEnumerator CheckForErrors()
@@ -51,40 +40,35 @@ public class AI : MonoBehaviour
         {
             if (!isInErrorState && !isStationary && Random.value < errorChance)
             {
-                
-                if (possibleErrors != null && possibleErrors.Length > 0)
-                {
-                    int randomIndex = Random.Range(0, possibleErrors.Length);
-                    ErrorType error = possibleErrors[randomIndex];
-                    switch (error)
-                    {
-                        case ErrorType.RandomMove:
-                            float randomX = Random.Range(-randomMoveRange, randomMoveRange);
-                            float randomZ = Random.Range(-randomMoveRange, randomMoveRange);
-                            if (moveInX)
-                                randomTargetPosition = new Vector3(Mathf.Clamp(transform.position.x + randomX, -limit, limit), transform.position.y, fixedPosition);
-                            else
-                                randomTargetPosition = new Vector3(fixedPosition, transform.position.y, Mathf.Clamp(transform.position.z + randomZ, -limit, limit));
-
-                            errorDuration = Random.Range(1f, 3f);
-                            isInErrorState = true;
-                            StartCoroutine(HandleErrorState());
-                            break;
-
-                        case ErrorType.StayStill:
-                            moveSpeed = 0;
-                            isStationary = true;
-                            stationaryTime = Random.Range(1f, 3f);
-                            StartCoroutine(HandleStationaryState());
-                            break;
-                    }
-                }
-                else
-                {
-                   Debug.LogError("El arreglo possibleErrors está vacío o no está inicializado.");
-                }
+                TriggerErrorState();
             }
             yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    void TriggerErrorState()
+    {
+        if (possibleErrors == null || possibleErrors.Length == 0)
+        {
+            Debug.LogError("El arreglo possibleErrors está vacío o no está inicializado");
+            return;
+        }
+
+        ErrorType error = possibleErrors[Random.Range(0, possibleErrors.Length)];
+        switch (error)
+        {
+            case ErrorType.RandomMove:
+                randomTargetPosition = GetRandomTargetPosition();
+                errorDuration = Random.Range(1f, 2f);
+                isInErrorState = true;
+                StartCoroutine(HandleErrorState());
+                break;
+
+            case ErrorType.StayStill:
+                isStationary = true;
+                stationaryTime = Random.Range(0.5f, 1f);
+                StartCoroutine(HandleStationaryState());
+                break;
         }
     }
 
@@ -101,11 +85,7 @@ public class AI : MonoBehaviour
 
     IEnumerator HandleStationaryState()
     {
-        while (stationaryTime > 0)
-        {
-            stationaryTime -= Time.deltaTime;
-            yield return null;
-        }
+        yield return new WaitForSeconds(stationaryTime);
         isStationary = false;
         moveSpeed = originalMoveSpeed;
     }
@@ -114,59 +94,76 @@ public class AI : MonoBehaviour
     {
         if (!isInErrorState && !isStationary)
         {
-            Vector3 ballPosition = ball.position;
-            Vector3 newTargetPosition = ballPosition;
-
-            targetPosition = newTargetPosition;
-
-            if (moveInX)
-            {
-                transform.position = new Vector3(Mathf.MoveTowards(transform.position.x, targetPosition.x, moveSpeed * Time.deltaTime), transform.position.y, fixedPosition);
-            }
-            else
-            {
-                transform.position = new Vector3(fixedPosition, transform.position.y, Mathf.MoveTowards(transform.position.z, targetPosition.z, moveSpeed * Time.deltaTime));
-            }
-
+            MoveTowardsClosestBall();
             ClampPositionWithinLimits();
         }
     }
 
-
-
-    // Método para asegurarse de que el cubo se mantenga dentro de los límites
-    void ClampPositionWithinLimits()
+    void MoveTowardsClosestBall()
     {
-        float clampedX = Mathf.Clamp(transform.position.x, -limit, limit);
-        float clampedZ = Mathf.Clamp(transform.position.z, -limit, limit);
-
-        if (moveInX)
+        if (balls.Count > 0)
         {
-            transform.position = new Vector3(clampedX, transform.position.y, fixedPosition); // Fijar Z
-        }
-        else
-        {
-            transform.position = new Vector3(fixedPosition, transform.position.y, clampedZ); // Fijar X
+            Transform closestBall = GetClosestBall();
+            targetPosition = closestBall.position;
+            MoveTowardsTarget(targetPosition);
         }
     }
 
-    // Reanuda el movimiento después de quedarse quieto
-    void ResumeMovement()
+    Transform GetClosestBall()
     {
-        moveSpeed = 5f; 
-        isStationary = false;
+        Transform closestBall = null;
+        float closestDistance = Mathf.Infinity;
+        foreach (Transform ball in balls)
+        {
+            float distance = Vector3.Distance(transform.position, ball.position);
+            if (distance < closestDistance)
+            {
+                closestBall = ball;
+                closestDistance = distance;
+            }
+        }
+        return closestBall;
     }
 
-    // Ejecuta el comportamiento de error mientras dura
+    void MoveTowardsTarget(Vector3 target)
+    {
+        Vector3 direction = target - transform.position;
+        direction.y = 0; // Ignorar la altura
+        direction.Normalize();
+        transform.position += direction * moveSpeed * Time.deltaTime;
+    }
+
+    Vector3 GetRandomTargetPosition()
+    {
+        float randomX = Random.Range(-randomMoveRange, randomMoveRange);
+        float randomZ = Random.Range(-randomMoveRange, randomMoveRange);
+        return moveInX ? new Vector3(Mathf.Clamp(transform.position.x + randomX, -limit, limit), transform.position.y, fixedPosition) : new Vector3(fixedPosition, transform.position.y, Mathf.Clamp(transform.position.z + randomZ, -limit, limit));
+    }
+
     void ExecuteErrorBehavior()
     {
         if (moveInX)
         {
-            transform.position = new Vector3(Mathf.MoveTowards(transform.position.x, randomTargetPosition.x, moveSpeed * Time.deltaTime), transform.position.y, fixedPosition); // Movimiento aleatorio en X
+            transform.position = new Vector3(
+                Mathf.MoveTowards(transform.position.x, randomTargetPosition.x, moveSpeed * Time.deltaTime),
+                transform.position.y,
+                fixedPosition
+            );
         }
         else
         {
-            transform.position = new Vector3(fixedPosition, transform.position.y, Mathf.MoveTowards(transform.position.z, randomTargetPosition.z, moveSpeed * Time.deltaTime)); // Movimiento aleatorio en Z
+            transform.position = new Vector3(
+                fixedPosition,
+                transform.position.y,
+                Mathf.MoveTowards(transform.position.z, randomTargetPosition.z, moveSpeed * Time.deltaTime)
+            );
         }
+    }
+
+    void ClampPositionWithinLimits()
+    {
+        float clampedX = Mathf.Clamp(transform.position.x, -limit, limit);
+        float clampedZ = Mathf.Clamp(transform.position.z, -limit, limit);
+        transform.position = moveInX ? new Vector3(clampedX, transform.position.y, fixedPosition) : new Vector3(fixedPosition, transform.position.y, clampedZ);
     }
 }

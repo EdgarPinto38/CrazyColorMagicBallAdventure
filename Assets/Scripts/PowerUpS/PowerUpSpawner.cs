@@ -16,7 +16,7 @@ public class PowerUpSpawner : MonoBehaviour
     {
         float x = Random.Range(-spawnRangeX, spawnRangeX);
         float z = Random.Range(-spawnRangeZ, spawnRangeZ);
-        Vector3 spawnPosition = new Vector3(x, 2f, z); // Asegúrate de que el eje Y no cambie
+        Vector3 spawnPosition = new Vector3(x, 2f, z); 
 
         // Elegir un power-up aleatorio del array
         int randomIndex = Random.Range(0, powerUpPrefabs.Length);
